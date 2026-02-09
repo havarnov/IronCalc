@@ -3,7 +3,7 @@
 use ironcalc_base::expressions::parser::{
     new_parser_english, static_analysis::add_implicit_intersection,
 };
-use std::{collections::HashMap, io::Read, num::ParseIntError};
+use std::{collections::{BTreeMap, HashMap}, io::Read, num::ParseIntError};
 
 use ironcalc_base::{
     expressions::{
@@ -789,7 +789,7 @@ pub(super) fn load_sheet<R: Read + std::io::Seek>(
         // Unused attributes:
         // * thickBot, thickTop, ph, collapsed, outlineLevel
 
-        let mut data_row = HashMap::new();
+        let mut data_row = BTreeMap::new();
 
         // 18.3.1.4 c (Cell)
         // Child Elements:

@@ -1759,6 +1759,47 @@ impl<'a> Model<'a> {
 
     /// Returns the cell value for (`sheet`, `row`, `column`)
     ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use ironcalc_base::Model;
+    /// use ironcalc_base::cell::CellValue;
+    /// fn main() -> Result<(), Box<dyn std::error::Error>> {
+    ///   let mut model = Model::new_empty("model", "en", "UTC", "en")?;
+    ///   model.set_user_input(0, 1, 1, "23".to_string());
+    ///   model.set_user_input(0, 2, 1, "9".to_string());
+    ///   model.set_user_input(0, 3, 1, "2".to_string());
+    ///
+    ///   assert_eq!(
+    ///     Ok(vec![CellValue::Number(23f64), CellValue::Number(9f64), CellValue::Number(2f64)]),
+    ///     model
+    ///         .get_cell_value_range_by_index(0, 1, 1, 3, 1)
+    ///         .map(|i| i.map(|(_, _, v)| v).collect::<Vec<CellValue>>()));
+    ///   Ok(())
+    /// }
+    /// ```
+    pub fn get_cell_value_range_by_index(
+        &self,
+        sheet_index: u32,
+        row: i32,
+        column: i32,
+        row_count: i32,
+        column_count: i32,
+    ) -> Result<impl Iterator<Item = (i32, i32, CellValue)> + use<'_>, String>
+    {
+        let sheet_data = &self.workbook.worksheet(sheet_index)?.sheet_data;
+        Ok((row..row+row_count).flat_map(move |r| {
+            (column..column + column_count).filter_map(move |c| {
+                sheet_data.get(&r)?.get(&c).map(|cell| {
+                    let cell_value = cell.value(&self.workbook.shared_strings, self.language);
+                    (r, c, cell_value)
+                })
+            })
+        }))
+    }
+
+    /// Returns the cell value for (`sheet`, `row`, `column`)
+    ///
     /// See also:
     /// * [Model::get_formatted_cell_value()]
     pub fn get_cell_value_by_index(

@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use bitcode::{Decode, Encode};
 
@@ -7,13 +7,13 @@ use crate::types::{Cell, Col, Row, SheetState, Style, Worksheet};
 #[derive(Clone, Encode, Decode)]
 pub(crate) struct RowData {
     pub(crate) row: Option<Row>,
-    pub(crate) data: HashMap<i32, Cell>,
+    pub(crate) data: BTreeMap<i32, Cell>,
 }
 
 #[derive(Clone, Encode, Decode)]
 pub(crate) struct ColumnData {
     pub(crate) column: Option<Col>,
-    pub(crate) data: HashMap<i32, Cell>,
+    pub(crate) data: BTreeMap<i32, Cell>,
 }
 
 #[derive(Clone, Encode, Decode)]

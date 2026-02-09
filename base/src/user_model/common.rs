@@ -1,11 +1,11 @@
 #![deny(missing_docs)]
 
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{BTreeMap, HashSet},
     fmt::Debug,
     io::Cursor,
 };
-
+use std::collections::HashMap;
 use csv::{ReaderBuilder, WriterBuilder};
 use serde::{Deserialize, Serialize};
 
@@ -30,7 +30,7 @@ use crate::user_model::history::{
 use super::{border_utils::is_max_border, sequence_detector::detect_progression};
 
 /// Data for the clipboard
-pub type ClipboardData = HashMap<i32, HashMap<i32, ClipboardCell>>;
+pub type ClipboardData = std::collections::HashMap<i32, std::collections::HashMap<i32, ClipboardCell>>;
 
 pub type ClipboardTuple = (i32, i32, i32, i32);
 
@@ -947,7 +947,7 @@ impl<'a> UserModel<'a> {
             }
             let data = match worksheet.sheet_data.get(&r) {
                 Some(s) => s.clone(),
-                None => HashMap::new(),
+                None => std::collections::BTreeMap::new(),
             };
             old_data.push(RowData {
                 row: row_data,
@@ -999,7 +999,7 @@ impl<'a> UserModel<'a> {
                 }
             }
 
-            let mut data = HashMap::new();
+            let mut data = BTreeMap::new();
             for (row_idx, row_data) in &worksheet.sheet_data {
                 if let Some(cell) = row_data.get(&c) {
                     data.insert(*row_idx, cell.clone());
@@ -1801,7 +1801,7 @@ impl<'a> UserModel<'a> {
             wtr.into_inner()
                 .map_err(|e| format!("Processing error: '{e}'"))?,
         )
-        .map_err(|e| format!("Error converting from utf8: '{e}'"))?;
+            .map_err(|e| format!("Error converting from utf8: '{e}'"))?;
 
         Ok(Clipboard {
             csv: csv.trim().to_string(),
